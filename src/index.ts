@@ -1,7 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config();
-import express from 'express';
-import config from "config";
 import Logger from "./utils/logger";
 import { closeDbConnectionPool, initDbConnectionPool } from "./utils/database";
 import { closeServer, initServer } from "./server";
