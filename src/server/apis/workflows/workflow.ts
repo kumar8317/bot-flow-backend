@@ -57,8 +57,13 @@ export const getAllWorkflows:Route = {
         async( req: Request, res: Response): Promise<void> =>{
             try {
 
-                const workflows = await getWorkflows();
-
+                const workflowsResponse = await getWorkflows();
+                const workflows = workflowsResponse.map((worflow)=>{
+                    return {
+                        ...worflow,
+                        logs: JSON.parse(worflow.logs)
+                    }
+                })
                 return sendDataResponse(
                     {
                         workflows

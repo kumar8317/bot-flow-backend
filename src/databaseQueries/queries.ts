@@ -1,5 +1,5 @@
 import { PoolClient} from "../databaseService";
-import { Workflow } from "./declaration";
+import { Workflow, WorkflowRes } from "./declaration";
 import databaseService from "../utils/database";
 
 /**
@@ -40,7 +40,7 @@ export const insertWorkflowTx = async(
  */
 export const getWorkflow = async(
     id: string
-): Promise<Workflow | undefined> => {
+): Promise<WorkflowRes | undefined> => {
     const query = 'Select * from workflows where id = $1';
     const params = [id];
 
@@ -54,7 +54,7 @@ export const getWorkflow = async(
  */
 export const getWorkflowsByEmail = async(
     user_email: string
-): Promise<Workflow []> => {
+): Promise<WorkflowRes []> => {
     const query = 'Select * from workflows where user_email = $1';
     const params = [user_email];
 
@@ -66,9 +66,19 @@ export const getWorkflowsByEmail = async(
 /**
  * Get all workflows
  */
-export const getWorkflows = async(): Promise<Workflow []> => {
+export const getWorkflows = async(): Promise<WorkflowRes[]> => {
     const query = 'Select * from workflows';
     const result = await databaseService.query(query, []);
 
     return result.rows;
+}
+
+/**
+ * Update logs in worlflow
+ */
+export const updateWorkflowLogs = async( logs:string, workflow_id:string) : Promise<void> => {
+    const query = `UPDATE workflows SET logs = $1 where id = $2`;
+    const params = [logs, workflow_id];
+
+    await databaseService.query(query,params);
 }

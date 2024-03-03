@@ -1,5 +1,10 @@
 import cron from "node-cron";
-import { Workflow, getWorkflows } from "../databaseQueries";
+import {
+  Workflow,
+  getWorkflow,
+  updateWorkflowLogs,
+  workflowLog,
+} from "../databaseQueries";
 import * as Logger from "../utils/logger";
 import { generateCronexpression } from "../utils/helper";
 import { runInNewContext } from "vm";
@@ -26,10 +31,49 @@ export const createCronJob = async (workflow: Workflow): Promise<void> => {
         });
 
         logger.info(`Result- ${result}`);
+
+        //Update workflow logs
+        logger.info(`workflow id:${workflow.id}`);
+        const flow = await getWorkflow(workflow.id);
+        if(flow){
+          const logs:workflowLog = JSON.parse(flow.logs);
+          const date = Date.now();
+          const newLogs = {
+            [date]: {
+              error: false,
+              msg: "",
+            },
+          };
+          if (logs) {
+            logs.push(newLogs);
+            await updateWorkflowLogs(JSON.stringify(logs), workflow.id);
+          } else {
+            await updateWorkflowLogs(JSON.stringify(newLogs), workflow.id);
+          }
+        }
+        
       } catch (error) {
         logger.error(
           `Error executing script for workflow with ID:${workflow.id} - error- ${error}`
         );
+
+        const flow = await getWorkflow(workflow.id);
+        if (flow) {
+          const logs:workflowLog = JSON.parse(flow.logs);
+          const date = Date.now();
+          const newLogs = {
+            [date]: {
+              error: true,
+              msg: error,
+            },
+          };
+          if (logs) {
+            logs.push(newLogs);
+            await updateWorkflowLogs(JSON.stringify(logs), workflow.id);
+          } else {
+            await updateWorkflowLogs(JSON.stringify(newLogs), workflow.id);
+          }
+        }
       }
     });
   } catch (error) {
