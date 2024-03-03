@@ -3,8 +3,8 @@ import { v4 as uuidv4 } from "uuid";
 import multer from 'multer';
 import { handleErrorResponse, Route, sendDataResponse } from "../../../server-lib";
 import * as Logger from '../../../utils/logger';
-import { Workflow, getWorkflow, getWorkflows, getWorkflowsByEmail, insertWorkflowTx } from "../../../databaseQueries";
-import { createCronJob } from "../../../services/cron";
+import { Workflow, getWorkflow, getWorkflows, getWorkflowsByEmail, insertWorkflowTx, updateWorkflowStop } from "../../../databaseQueries";
+import { createCronJob, stopCronJob } from "../../../services/cron";
 
 const logger = Logger.default("Workflow-API");
 
@@ -113,6 +113,37 @@ export const getWorkflowByUserEmail:Route = {
                 return sendDataResponse(
                     {
                         workflows
+                    },
+                    res
+                )
+            } catch (error) {
+                logger.fatal("error,", error);
+                return handleErrorResponse(<Error> error,res);
+            }
+        }
+    ]
+}
+
+export const updateWorkflow:Route = {
+    isRoute: true,
+    path: "/workflow/:id/update",
+    method: "post",
+    handlers: [ 
+        async( req: Request, res: Response): Promise<void> =>{
+            try {
+                logger.debug("Request body", JSON.stringify(req.body));
+                const { id} = req.params;
+                const {stop} = req.body
+                
+                if(stop){
+                    stopCronJob(id);
+                }
+                await updateWorkflowStop(stop,id);
+
+                const workflow = await getWorkflow(id);
+                return sendDataResponse(
+                    {
+                        workflow
                     },
                     res
                 )

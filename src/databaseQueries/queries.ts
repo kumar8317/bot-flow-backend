@@ -82,3 +82,13 @@ export const updateWorkflowLogs = async( logs:string, workflow_id:string) : Prom
 
     await databaseService.query(query,params);
 }
+
+/**
+ * Update Stop status in worlflow
+ */
+export const updateWorkflowStop = async( stop:boolean, workflow_id:string) : Promise<void> => {
+    const query = `UPDATE workflows SET stop = $1 where id = $2`;
+    const params = [stop, workflow_id];
+
+    await databaseService.query(query,params);
+}

@@ -13,6 +13,7 @@ export type WorkflowRes = {
   runOnce: boolean;
   datetime: string;
   logs: string;
+  stop: boolean;
 };
 
 export type workflowLog = {

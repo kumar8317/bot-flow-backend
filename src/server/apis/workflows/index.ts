@@ -1,5 +1,5 @@
 import { Routing } from '../../../server-lib';
-import { createWorkflow, getAllWorkflows, getWorkflowById, getWorkflowByUserEmail } from './workflow';
+import { createWorkflow, getAllWorkflows, getWorkflowById, getWorkflowByUserEmail, updateWorkflow } from './workflow';
 
 const workflowRouting: Routing = {
   isRoute: false,
@@ -8,7 +8,8 @@ const workflowRouting: Routing = {
     createWorkflow,
     getWorkflowById,
     getWorkflowByUserEmail,
-    getAllWorkflows
+    getAllWorkflows,
+    updateWorkflow
   ],
 };
 
