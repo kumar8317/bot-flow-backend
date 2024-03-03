@@ -1,49 +1,48 @@
-import { PoolClient, QueryFunction } from "../databaseService";
-import { Scheduler } from "./declaration";
+import { PoolClient} from "../databaseService";
+import { Workflow } from "./declaration";
 import databaseService from "../utils/database";
-import config from 'config';
 
 /**
- * Store Scheduler record
+ * Store Workflow record
  */
-const storeScheuleRecord = async(
+const storeWorkflowRecord = async(
     pgClient: PoolClient,
-    scheduler: Scheduler
+    workflow: Workflow
 ): Promise<void> => {
-    const query = `INSERT INTO schedulers
+    const query = `INSERT INTO workflows (
         (id,user_email,user_id,script,runOnce,cron_expr)
         VALUES ($1, $2, $3, $4, $5, $6);`;
     const parameters = [
-        scheduler.id,
-        scheduler.user_email,
-        scheduler.user_id,
-        scheduler.script,
-        scheduler.runOnce,
-        scheduler.cron_expr
+        workflow.id,
+        workflow.user_email,
+        workflow.user_id,
+        workflow.script,
+        workflow.runOnce,
+        workflow.cron_expr
     ];
 
     await databaseService.queryByClient(pgClient,query,parameters);
 }
 
 /**
- * Scheduler Transaction
+ * Workflow Transaction
  */
-export const insertScheulerTx = async(
-    scheuler: Scheduler
+export const insertWorkflowTx = async(
+    workflow: Workflow
 ): Promise<void> => {
     const trx = async (client: PoolClient) => {
-        await storeScheuleRecord(client,scheuler);
+        await storeWorkflowRecord(client,workflow);
     }
     await databaseService.transaction(trx);
 }
 
 /**
- * Get Scheduler
+ * Get Workflow
  */
-export const getScheduler = async(
+export const getWorkflow = async(
     id: string
-): Promise<Scheduler | undefined> => {
-    const query = 'Select * from schedulers where id = $1';
+): Promise<Workflow | undefined> => {
+    const query = 'Select * from workflows where id = $1';
     const params = [id];
 
     const result = await databaseService.query(query, params);
@@ -52,12 +51,12 @@ export const getScheduler = async(
 }
 
 /**
- * Get schedulers by email
+ * Get workflows by email
  */
-export const getSchedulersByEmail = async(
+export const getWorkflowsByEmail = async(
     user_email: string
-): Promise<Scheduler []> => {
-    const query = 'Select * from schedulers where user_email = $1';
+): Promise<Workflow []> => {
+    const query = 'Select * from workflows where user_email = $1';
     const params = [user_email];
 
     const result = await databaseService.query(query, params);
@@ -66,11 +65,11 @@ export const getSchedulersByEmail = async(
 }
 
 /**
- * Get all schedulers
+ * Get all workflows
  */
-export const getSchedulers = async(): Promise<Scheduler []> => {
-    const query = 'Select * from schedulers';
+export const getWorkflows = async(): Promise<Workflow []> => {
+    const query = 'Select * from workflows';
     const result = await databaseService.query(query, []);
-    
+
     return result.rows;
 }
