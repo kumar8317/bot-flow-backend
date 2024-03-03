@@ -91,7 +91,10 @@ export const runJobs  = async() => {
     const getallWorkflows = await getWorkflows();
 
     getallWorkflows.forEach(async (workflow)=>{
-      await createCronJob(workflow);
+      if(!workflow.stop){
+        await createCronJob(workflow);
+      }
+      
     })
 
   } catch (error) {
