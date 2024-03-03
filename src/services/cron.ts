@@ -15,8 +15,9 @@ const logger = Logger.default("Crons");
 export const createCronJob = async (workflow: Workflow): Promise<void> => {
   try {
     logger.info("running cron jobs");
-    const datetime = new Date(Number(workflow.datetime) * 1000);
-    const cronExpression = generateCronexpression(workflow.runOnce, datetime);
+    //const datetime = new Date(Number(workflow.datetime) * 1000);
+    //const cronExpression = generateCronexpression(workflow.runOnce, datetime);
+    const cronExpression = workflow.datetime
     logger.info(`expression:${cronExpression}`);
     // Create a cron job for the workflow
     cron.schedule(cronExpression, async () => {
@@ -48,7 +49,7 @@ export const createCronJob = async (workflow: Workflow): Promise<void> => {
             logs.push(newLogs);
             await updateWorkflowLogs(JSON.stringify(logs), workflow.id);
           } else {
-            await updateWorkflowLogs(JSON.stringify(newLogs), workflow.id);
+            await updateWorkflowLogs(JSON.stringify([newLogs]), workflow.id);
           }
         }
         
@@ -71,7 +72,7 @@ export const createCronJob = async (workflow: Workflow): Promise<void> => {
             logs.push(newLogs);
             await updateWorkflowLogs(JSON.stringify(logs), workflow.id);
           } else {
-            await updateWorkflowLogs(JSON.stringify(newLogs), workflow.id);
+            await updateWorkflowLogs(JSON.stringify([newLogs]), workflow.id);
           }
         }
       }
