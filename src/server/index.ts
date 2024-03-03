@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 import { Options, ServerApp } from "../server-lib";
-import cronRouting from "./apis/cron";
 import config from "config";
+import workflowRouting from "./apis/workflows";
 
 const serverName = "Server";
 
@@ -20,7 +20,7 @@ const expressOptions: Options = {
 // Initialize Server Object
 const apiServer = new ServerApp(expressOptions);
 
-apiServer.applyRoutes("", cronRouting);
+apiServer.applyRoutes("/api", workflowRouting );
 
 const initServer = async (): Promise<void> => {
   await apiServer.initalise();

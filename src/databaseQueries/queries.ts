@@ -9,16 +9,15 @@ const storeWorkflowRecord = async(
     pgClient: PoolClient,
     workflow: Workflow
 ): Promise<void> => {
-    const query = `INSERT INTO workflows (
-        (id,user_email,user_id,script,runOnce,cron_expr)
-        VALUES ($1, $2, $3, $4, $5, $6);`;
+    const query = `INSERT INTO workflows
+        (id,user_email,script,runOnce,datetime)
+        VALUES ($1, $2, $3, $4, $5);`;
     const parameters = [
         workflow.id,
         workflow.user_email,
-        workflow.user_id,
         workflow.script,
         workflow.runOnce,
-        workflow.cron_expr
+        workflow.datetime
     ];
 
     await databaseService.queryByClient(pgClient,query,parameters);

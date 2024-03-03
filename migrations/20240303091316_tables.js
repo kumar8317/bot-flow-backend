@@ -7,10 +7,9 @@ exports.up = async function(knex) {
     CREATE TABLE workflows (
         id UUID NOT NULL PRIMARY KEY,
         user_email VARCHAR(200) NOT NULL,
-        user_id VARCHAR(200) NOT NULL,
         script TEXT NOT NULL,
         runOnce BOOLEAN NOT NULL DEFAULT FALSE,
-        cron_expr VARCHAR(200) NOT NULL
+        datetime VARCHAR(200) NOT NULL
     );
   `)
 };
