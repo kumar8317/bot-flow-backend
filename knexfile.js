@@ -24,4 +24,22 @@ module.exports = {
       tableName: "knex_migrations",
     },
   },
+  production: {
+    client: "pg",
+    connection: {
+      host: config.get('Database.host'),
+      port: config.get('Database.port'),
+      user: config.get('Database.user'),
+      password: config.get('Database.password'),
+      database: config.get('Database.database'),
+    },
+    pool: {
+      min: 2,
+      max: 100,
+      "propagateCreateError": false
+    },
+    migrations: {
+      tableName: "knex_migrations",
+    },
+  }
 };
