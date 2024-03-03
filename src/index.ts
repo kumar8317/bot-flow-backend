@@ -5,6 +5,7 @@ import config from "config";
 import Logger from "./utils/logger";
 import { closeDbConnectionPool, initDbConnectionPool } from "./utils/database";
 import { closeServer, initServer } from "./server";
+import { runJobs } from "./services/cron";
 
 const logger = Logger("INDEX");
 
@@ -27,6 +28,8 @@ const bootUp = async() => {
     try {
         await initDbConnectionPool();
         await initServer();
+
+        await runJobs();
     } catch (e) {
         logger.fatal("Error while booting up, shutting down!", e);
         await gracefulShutdown();

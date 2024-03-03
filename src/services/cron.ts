@@ -2,6 +2,7 @@ import cron from "node-cron";
 import {
   Workflow,
   getWorkflow,
+  getWorkflows,
   updateWorkflowLogs,
   workflowLog,
 } from "../databaseQueries";
@@ -81,3 +82,16 @@ export const createCronJob = async (workflow: Workflow): Promise<void> => {
     logger.error(`Error creating cron jobs:${error}`);
   }
 };
+
+export const runJobs  = async() => {
+  try {
+    const getallWorkflows = await getWorkflows();
+
+    getallWorkflows.forEach(async (workflow)=>{
+      await createCronJob(workflow);
+    })
+
+  } catch (error) {
+    logger.error(`Error running jobs:${error}`);
+  }
+}
