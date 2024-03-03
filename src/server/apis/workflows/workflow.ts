@@ -4,6 +4,7 @@ import multer from 'multer';
 import { handleErrorResponse, Route, sendDataResponse } from "../../../server-lib";
 import * as Logger from '../../../utils/logger';
 import { Workflow, getWorkflow, getWorkflows, getWorkflowsByEmail, insertWorkflowTx } from "../../../databaseQueries";
+import { createCronJob } from "../../../services/cron";
 
 const logger = Logger.default("Workflow-API");
 
@@ -33,7 +34,7 @@ export const createWorkflow:Route = {
                 }
 
                 await insertWorkflowTx(workflow);
-
+                await createCronJob(workflow)
                 return sendDataResponse(
                     {
                         workflow
