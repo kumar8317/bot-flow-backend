@@ -10,6 +10,7 @@ import * as Logger from "../utils/logger";
 import { generateCronexpression } from "../utils/helper";
 import { runInNewContext } from "vm";
 import puppeteer from "puppeteer";
+import { chromium } from "playwright";
 
 const logger = Logger.default("Crons");
 
@@ -31,7 +32,7 @@ export const createCronJob = async (workflow: Workflow): Promise<void> => {
         const result = await runInNewContext(scriptContent, {
           require: require,
           console: console,
-          puppeteer: puppeteer,
+          chromium: chromium,
         });
 
         logger.info(`Result- ${result}`);

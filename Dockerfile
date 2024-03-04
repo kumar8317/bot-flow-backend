@@ -1,13 +1,14 @@
-FROM ghcr.io/puppeteer/puppeteer:22.3.0
-
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+FROM mcr.microsoft.com/playwright:v1.42.1
 
 WORKDIR /home/node/app
+
+ENV ENV PATH /home/node/app/node_modules/.bin:$PATH
 
 COPY package*.json ./
 
 RUN npm ci
+RUN npm install -g playwright
+RUN playwright install
 COPY . .
 
 RUN  npm run build
