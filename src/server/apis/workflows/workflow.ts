@@ -133,14 +133,36 @@ export const updateWorkflow:Route = {
             try {
                 logger.debug("Request body", JSON.stringify(req.body));
                 const { id} = req.params;
-                const {stop} = req.body
+                const {stop, datetime} = req.body
                 
                 if(stop){
                     stopCronJob(id);
                 }
-                await updateWorkflowStop(stop,id);
+                
+                await updateWorkflowStop({
+                    updateBy: {
+                        id
+                    },
+                    updateFiedls: {
+                        stop: req.body.stop as boolean,
+                        runOnce: req.body.runOnce as boolean,
+                        datetime: req.body.datetime as string,
+                    }
+                });
 
                 const workflow = await getWorkflow(id);
+                if(workflow){
+                    if(datetime){
+                        stopCronJob(id);
+                        createCronJob({
+                            id: workflow.id,
+                            user_email: workflow.user_email,
+                            script: workflow.script,
+                            datetime: workflow.datetime,
+                            runOnce: workflow.runOnce
+                        });         
+                    }
+                } 
                 return sendDataResponse(
                     {
                         workflow
